@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String   @unique
+  password  String?
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  reviews   Review[]
+}
+
+enum Role {
+  ADMIN
+  EDITOR
+  USER
+}
+
+model Product {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  shortDesc String
+  longDesc  String?
+  images    String[] @default([])
+  features  Json?
+  demos     String[] @default([])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Portfolio {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  clientName    String
+  projectType   String
+  summary       String
+  gallery       String[] @default([])
+  techStack     String[] @default([])
+  resultMetrics Json?
+  createdAt     DateTime @default(now())
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  authorName  String
+  authorEmail String
+  rating      Int
+  title       String?
+  content     String
+  productId   String?
+  portfolioId String?
+  approved    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  User        User?    @relation(fields: [userId], references: [id])
+  userId      String?
+}
+
+model Page {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  content   Json
+  meta      Json?
+  updatedAt DateTime @updatedAt
+}
+
+model SiteSetting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value Json
+}
+
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  type      String
+  payload   Json
+  createdAt DateTime @default(now())
+}
