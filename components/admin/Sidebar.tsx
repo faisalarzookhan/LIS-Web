@@ -1,5 +1,7 @@
+"use client";
 import React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const adminSections = [
   { name: 'Dashboard', href: '/admin' },
@@ -14,19 +16,29 @@ const adminSections = [
 ];
 
 const Sidebar = () => {
+  const pathname = usePathname();
+
   return (
-    <aside className="w-64 bg-gray-100 dark:bg-gray-800 p-4">
+    <aside className="w-64 bg-gray-100 dark:bg-gray-800 p-4 flex-shrink-0">
       <nav>
         <ul>
-          {adminSections.map(section => (
-            <li key={section.name}>
-              <Link href={section.href}>
-                <a className="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700">
+          {adminSections.map(section => {
+            const isActive = pathname === section.href;
+            return (
+              <li key={section.name}>
+                <Link
+                  href={section.href}
+                  className={`block py-2 px-4 rounded transition-colors ${
+                    isActive
+                      ? 'bg-primary text-white'
+                      : 'hover:bg-gray-200 dark:hover:bg-gray-700'
+                  }`}
+                >
                   {section.name}
-                </a>
-              </Link>
-            </li>
-          ))}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </nav>
     </aside>
